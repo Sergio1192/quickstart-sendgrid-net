@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
-using System.Net.Mail;
 
 namespace QuickstartSendgrid.Services;
 
@@ -20,7 +19,7 @@ public class SendEmailsService
     {
         if (!options.Active)
             return;
-        
+
         var mail = new SendGridMessage();
         mail.SetFrom(new EmailAddress(options.From.Email, options.From.Name));
 
@@ -31,7 +30,7 @@ public class SendEmailsService
         }
         else
         {
-            tos = GetRecipients(options.SendAllEmailsTo.Split(';'));  
+            tos = GetRecipients(options.SendAllEmailsTo.Split(';'));
         }
 
         if (!tos.Any())
@@ -58,6 +57,6 @@ public class SendEmailsService
 
     private static IEnumerable<EmailAddress> GetRecipients(IEnumerable<string> addresses)
         => addresses
-            .Select(address => new EmailAddress(address.Trim()))
-            .DistinctBy(a => a.Email);
+            .Distinct()
+            .Select(address => new EmailAddress(address.Trim()));
 }
